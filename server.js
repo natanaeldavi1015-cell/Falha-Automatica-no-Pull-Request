@@ -1,4 +1,4 @@
-const variavel = "erro_propositado";
+const variavelQueNaoServeParaNada = "erro_propositado";
 const express = require('express');
 const app = express();
 const PORT = 3000;
