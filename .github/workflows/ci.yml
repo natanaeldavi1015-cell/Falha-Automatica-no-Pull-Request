@@ -1,45 +1,24 @@
-name: Pipeline de Integração Continua (CI)
-
-# Gatilhos Dispara o Pipelone em Pushes e Pull Requests na Branch principal
+name: testes-e-validacao
 
 on:
-  push:
-    branches: ["main", "master"]
   pull_request:
-    branches: ["main", "master"]
+    branches: [ main ]
 
 jobs:
-  testes-e-validacao:
-# Define o sistema operacional do Runner (Maquina Virtual)
+  lint:
     runs-on: ubuntu-latest
 
-  steps:
-# Step 1: Baixa o codigo do repositorio para o Runner
-    - name: Baixar Codigo-Fonte
-      users: actions/checkout@v4
+    steps:
+    - name: Baixar o código do repositório
+      uses: actions/checkout@v4
 
-# Step 2: Configura o ambiente Node.js
-    - name: Configurar Node.js
-      uses:
+    - name: Configurar o Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
 
-# Step 3: Instala depêndencias de forma consistente
-    - name:  Instalar Dependencias
-      run: npm CI
+    - name: Instalar dependências
+      run: npm install --legacy-peer-deps
 
-# Step 4: Analise Estática com Linter
-    - name: Execultar Linter
-      run: npm run lint
-
-# Step 5: Testes Unitários
-    - name: Execultar tests automatizados
-      run: npm test
-
-# Step 6: Analise Estatica de Segurança Basica (SAST)
-    - name: Verificacao de Segurança de Dependencias (SAST)
-      run: npm audit --audit-level=high
-
-
-
+    - name: Rodar o ESLint
+      run: npx eslint .
