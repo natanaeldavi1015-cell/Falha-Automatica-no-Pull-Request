@@ -1,0 +1,44 @@
+name: Build e Publicacao de Imagem Docker
+
+on:
+  push:
+    branches: ['main'] # Dispara apenas ao realizar marge ou push na main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Baixar o Codigo-fonte do Repositorio
+      - name: Baixar Codigo
+        uses: actions/checkout@v4
+
+      # Step 2: Configurar o docker Buildx (Ferramenta para builds)
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 3: Autenticar no Docker Hub usando Secrets
+      - name: Autenticar mo Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 4: Extrair Metadados do Docker
+      - name: Extrair Metadados do Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/minha-aplicacao
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      # Step 5: Construir e Publicar (Build e Push)
+      - name: Construir e Publicar Imagem
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
