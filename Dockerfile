@@ -14,7 +14,9 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production --legacy-peer-deps
+
+# Mudamos de 'npm ci' para 'npm install' com a flag de produção, que aceita o legacy-peer-deps perfeitamente
+RUN npm install --omit=dev --legacy-peer-deps
 
 COPY --from=builder /app/server.js ./server.js
 
