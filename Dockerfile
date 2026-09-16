@@ -15,7 +15,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Mudamos de 'npm ci' para 'npm install' com a flag de produção, que aceita o legacy-peer-deps perfeitamente
+# Comando corrigido e com a flag aceita pelo npm
 RUN npm install --omit=dev --legacy-peer-deps
 
 COPY --from=builder /app/server.js ./server.js
